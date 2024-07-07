@@ -24,7 +24,7 @@ let ingredients = [
   },
 ];
 
-app.get("/", function (request, response) {
+app.get("/ingredients", function (request, response) {
   response.send(ingredients);
 });
 
@@ -32,13 +32,30 @@ app.get("/snacks", function (req, res) {
   res.send("Hey get me some Snacks...!");
 });
 
-app.post("/", function (req, res) {
-  let ingredient = res.body;
-  if (!ingredient || ingredient === "") {
+app.post("/ingredients", function (req, res) {
+  let ingredient = req.body;
+  if (!ingredient || ingredient.text === "") {
     res.status(500).send({ error: "Your ingredient must have text" });
   } else {
     ingredients.push(ingredient);
     res.status(200).send(ingredients);
+  }
+});
+
+app.put("/ingredients/:ingredientId", function (req, res) {
+  let newText = req.body.text;
+  if (!newText || newText === "") {
+    res.status(500).send({ error: "You must provide an ingredient name" });
+  } else {
+    for (let x = 0; x < ingredients.length; x++) {
+      let ing = ingredients[x];
+
+      if (ing.id === req.params.ingredientId) {
+        ing.text = newText;
+        break;
+      }
+    }
+    res.send(ingredients);
   }
 });
 
